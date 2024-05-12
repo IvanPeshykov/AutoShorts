@@ -33,8 +33,6 @@ def create(session_id : str, text_speaker: str = "en_us_002", req_text: str = "T
         output_data = {"status": "Session ID is invalid", "status_code": 5}
         print(output_data)
         return output_data
-    
-    print(r.json())
 
     vstr = [r.json()["data"]["v_str"]][0]
     msg = [r.json()["message"]][0]
@@ -61,7 +59,7 @@ def create(session_id : str, text_speaker: str = "en_us_002", req_text: str = "T
         playsound.playsound(filename)
         os.remove(filename)
 
-    return output_data
+    return filename
 
 
 def batch_create(filename: str = 'voice.mp3'):
@@ -89,7 +87,6 @@ def sampler():
     for item in voices:
         text_speaker = item
         filename = item
-        print(item)
         req_text = 'TikTok Text To Speech Sample'
         create(text_speaker, req_text, filename)
 
