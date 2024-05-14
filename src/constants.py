@@ -1,3 +1,5 @@
+tts_max_characters = 300
+
 voices = [
     # DISNEY VOICES
     'en_us_ghostface',            # Ghost Face
@@ -53,4 +55,18 @@ voices = [
     'en_male_narration'           # narrator
     'en_male_funny'               # wacky
     'en_female_emotional'         # peaceful
+]
+
+fonts = [
+    'LEMON-MILK-Bold',
+    'Arial-Bold'
+]
+
+colors = [
+    '#A63E44',
+    '#B57047',
+    '#41C58D',
+    '#4CBCC6',
+    '#FFFFFF',
+    '#C43DC9'
 ]
