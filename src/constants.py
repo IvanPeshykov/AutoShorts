@@ -1,4 +1,5 @@
 tts_max_characters = 300
+aspect_ratio = 9/16
 
 voices = [
     # DISNEY VOICES
