@@ -95,7 +95,7 @@ def randomvoice():
 
 def generate_subtitles(audio_path : str, output_folder = 'output'):
     
-    model = whisper.load_model("base")
+    model = whisper.load_model("large")
     result = model.transcribe(audio_path, language = 'en', word_timestamps=True)
     
     word_options = {

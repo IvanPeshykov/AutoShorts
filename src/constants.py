@@ -60,14 +60,4 @@ voices = [
 
 fonts = [
     'LEMON-MILK-Bold',
-    'Arial-Bold'
-]
-
-colors = [
-    '#A63E44',
-    '#B57047',
-    '#41C58D',
-    '#4CBCC6',
-    '#FFFFFF',
-    '#C43DC9'
 ]

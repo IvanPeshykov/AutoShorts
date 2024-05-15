@@ -14,7 +14,8 @@ class Video:
         self.audio_clip = CompositeAudioClip([AudioFileClip(voice)])
         
     def add_subtitles(self, subtitles):
-        generator = lambda txt: TextClip(txt, font=get_random_font(), fontsize=70, method='pango')
+        random_font = get_random_font()
+        generator = lambda txt, font = random_font: TextClip(txt, font = font, fontsize=40, color='white', stroke_color='black', stroke_width=3)
         self.subtitles = SubtitlesClip(subtitles, generator)
 
     def crop_video(self, video):

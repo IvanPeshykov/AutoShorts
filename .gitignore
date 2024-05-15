@@ -152,7 +152,8 @@ cython_debug/
 #.idea/
 
 #VsCode 
-.vscode
+.vscode/
 
-# Output files
-.output
+#Output files
+output/
+
