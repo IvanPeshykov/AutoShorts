@@ -23,7 +23,7 @@ class Video:
 
     def crop_video(self, video):
         (w, h) = video.size
-        crop_width = aspect_ratio * h
+        crop_width = round(aspect_ratio * h, -1)
         x1, x2 = (w - crop_width)//2, (w+crop_width)//2
         y1, y2 = 0, h
         return video.crop(x1=x1 , y1 = y1, x2=x2, y2 = y2)
@@ -39,5 +39,5 @@ class Video:
         # Cut a little bit  at the end because of the sound bug of moviepy (i guess)
         final = final.subclip(0, final.duration - 0.05)
 
-        final.write_videofile(path, fps=60)
+        final.write_videofile(path)
         final.close()
