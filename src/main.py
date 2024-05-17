@@ -57,12 +57,18 @@ def main():
     # Song is an optional argument, it is either pat to file or to folder
     parser.add_argument('--s', '--path', required=False, default='')
     args = parser.parse_args()
-
     
     # Check if our folder for output exists, if not - create
 
     if not os.path.exists(output_path):
         os.makedirs(output_path)
+
+    # Clear output folder
+    files = os.listdir(output_path)
+    for file in files:
+        file_path = os.path.join(output_path, file)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
 
     choose_mode(args)
 

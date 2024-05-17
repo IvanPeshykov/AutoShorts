@@ -26,6 +26,27 @@ def combine_audios(output_path: str, audios: list[str]):
     
     return combined_path
 
+def split_text(text):
+     
+    parts = []
+    temp_str = ''
+    counter = 0
+
+    for c in text:
+        temp_str += c
+        counter += 1
+
+        if c == '.' or counter >= tts_max_characters:
+            parts.append(temp_str)
+            counter = 0
+            temp_str = ''
+    
+    if len(temp_str) > 0:
+            parts.append(temp_str)
+    
+    return parts
+
+
 def tts(session_id : str, text_speaker: str = "en_us_002", req_text: str = "TikTok Text To Speech",
         output_path: str = 'output'):
     req_text = req_text.replace("+", "plus")
@@ -40,13 +61,14 @@ def tts(session_id : str, text_speaker: str = "en_us_002", req_text: str = "TikT
         text_speaker = randomvoice()
 
     # Tiktok tts api accepts only 300 characters per one call. So we will make multiple calls if needed and merge audio
-    parts = math.ceil(len(req_text) / tts_max_characters)
-    temp_audios = []
+    parts = split_text(req_text)
+    temp_audios = []  
+    
 
-    for i in range(0, parts):
+    for i, text in enumerate(parts):
 
         r = requests.post(
-            f"{API_BASE_URL}?text_speaker={text_speaker}&req_text={req_text[i * tts_max_characters: (i + 1) * tts_max_characters]}&speaker_map_type=0&aid=1233",
+            f"{API_BASE_URL}?text_speaker={text_speaker}&req_text={text}&speaker_map_type=0&aid=1233",
             headers={
             'User-Agent': USER_AGENT,
             'Cookie': f'sessionid={session_id}'
@@ -70,7 +92,7 @@ def tts(session_id : str, text_speaker: str = "en_us_002", req_text: str = "TikT
 
         path = os.path.join(output_path, "temp" + str(i) + ".mp3")
 
-        with open(os.path.join(output_path, "temp" + str(i) + ".mp3"), "wb") as out:
+        with open(path, "wb") as out:
             out.write(b64d)
             temp_audios.append(path)
 
@@ -85,6 +107,7 @@ def tts(session_id : str, text_speaker: str = "en_us_002", req_text: str = "TikT
     combined_path = combine_audios(output_path, temp_audios)
     
     return combined_path
+
 
 
 def randomvoice():
