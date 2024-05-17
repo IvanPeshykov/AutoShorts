@@ -1,6 +1,4 @@
-import srt
-import random
-from constants import fonts
+import srt, random, os
 
 def format_srt(file_path):
     # Read in the file
@@ -18,5 +16,14 @@ def format_srt(file_path):
     
     file.close()
 
-def get_random_font():
-    return fonts[random.randint(0, len(fonts) - 1)]
+def format_song(song_path : str):
+    if os.path.isdir(song_path):
+        files = os.listdir(song_path)
+        if not files:
+            raise ValueError("Songs folder that you provided is empty!")
+        return os.path.join(song_path, random.choice(files))
+    
+    return song_path
+
+def get_random_item(items):
+    return items[random.randint(0, len(items) - 1)]

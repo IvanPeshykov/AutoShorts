@@ -95,7 +95,7 @@ def randomvoice():
 
 def generate_subtitles(audio_path : str, output_folder = 'output'):
     
-    model = whisper.load_model("large")
+    model = whisper.load_model("medium")
     result = model.transcribe(audio_path, language = 'en', word_timestamps=True)
     
     word_options = {
@@ -110,5 +110,8 @@ def generate_subtitles(audio_path : str, output_folder = 'output'):
     vtt_writer(result, audio_path, word_options)
 
     format_srt(output_path)
+
+    # Ask user to mannualy continue, because he might want to edit srt file
+    input('Press any key to continue')
 
     return output_path
