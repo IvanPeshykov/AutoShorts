@@ -11,8 +11,8 @@ class Video:
         self.audio_clips = []
         self.initial_duration = self.video_clip.duration
 
-    def add_audio(self, voice, volume = 1.0):
-        audio = AudioFileClip(voice)
+    def add_audio(self, file, volume = 1.0):
+        audio = AudioFileClip(file)
         audio = volumex(audio, volume)
         self.audio_clips.append(audio)
         
@@ -28,16 +28,34 @@ class Video:
         y1, y2 = 0, h
         return video.crop(x1=x1 , y1 = y1, x2=x2, y2 = y2)
     
-    def save(self, path):
-        final = CompositeVideoClip([self.video_clip, self.subtitles.set_position(('center', 'center'), relative=True)])
+    @staticmethod
+    def combine_videos(videos, output_path):
+        final = concatenate_videoclips([video.video_clip for video in videos], method='compose')
+        final.write_videofile(output_path, fps=60)
+        final.close()
+        return Video(output_path)
+    
+    def save(self, path, keep_audio = False):
+        final = self.video_clip
+
+        if hasattr(self, 'subtitles'):
+            final = CompositeVideoClip([self.video_clip, self.subtitles.set_position(('center', 'center'), relative=True)])
+
+        if keep_audio:
+            self.audio_clips.append(AudioFileClip(final.audio.filename))
+
         audio = CompositeAudioClip(self.audio_clips)
         final.audio = audio
         
         # Cut video to origignal length, because subtitles can be longer than video and extend it
-        final = final.subclip(0, min(self.initial_duration, audio.duration, self.subtitles.duration))
+        final = final.subclip(0, min(self.initial_duration, audio.duration))
 
         # Cut a little bit  at the end because of the sound bug of moviepy (i guess)
         final = final.subclip(0, final.duration - 0.05)
 
-        final.write_videofile(path)
+        final.write_videofile(path, fps=60)
+
         final.close()
+        self.video_clip.close()
+
+        return path

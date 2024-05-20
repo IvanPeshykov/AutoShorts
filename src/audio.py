@@ -17,14 +17,13 @@ def combine_audios(output_path: str, audios: list[str]):
     for audio in audios:
         combined += AudioSegment.from_file(audio, format="mp3")
 
-    combined_path = os.path.join(output_path, "output.mp3")
-    combined.export(combined_path, format="mp3")
+    combined.export(output_path, format="mp3")
 
     # Delete audios, since we already have combined one
     for audio in audios:
         os.remove(audio)
     
-    return combined_path
+    return output_path
 
 def split_text(text):
      
@@ -90,7 +89,7 @@ def tts(session_id : str, text_speaker: str = "en_us_002", req_text: str = "TikT
 
         b64d = base64.b64decode(vstr)
 
-        path = os.path.join(output_path, "temp" + str(i) + ".mp3")
+        path = "temp" + str(i) + ".mp3"
 
         with open(path, "wb") as out:
             out.write(b64d)
@@ -116,7 +115,7 @@ def randomvoice():
 
     return text_speaker
 
-def generate_subtitles(audio_path : str, output_folder = 'output'):
+def generate_subtitles(audio_path : str, output_folder = 'output', skip = False):
     
     model = whisper.load_model("medium")
     result = model.transcribe(audio_path, language = 'en', word_timestamps=True)
@@ -127,7 +126,7 @@ def generate_subtitles(audio_path : str, output_folder = 'output'):
     "max_line_width": 10
     }
 
-    output_path = os.path.join(output_folder, output_folder + '.srt')
+    output_path = audio_path[:-4] + '.srt'
 
     vtt_writer = get_writer(output_format='srt', output_dir=output_folder)
     vtt_writer(result, audio_path, word_options)
@@ -135,6 +134,7 @@ def generate_subtitles(audio_path : str, output_folder = 'output'):
     format_srt(output_path)
 
     # Ask user to mannualy continue, because he might want to edit srt file
-    input('Press any key to continue')
+    if not skip:
+        input('Press any key to continue')
 
     return output_path

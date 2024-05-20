@@ -13,14 +13,27 @@ def choose_mode(args):
 
     # -m = manual, -a = automatic
     if args.mode == 'm':
-        video_path = input(str("Specify the path to the video:"))
+
+        items = []
+
+        while(True):
+            video_path = input(str("Specify the path to the video: (leave empty to continue)" ))
+
+            if video_path == '':
+                break
         
-        # Remove quotes (because when you copy path in Windows they are automaticly copied, that's annoing to always remove them manualy)
-        video_path = video_path.replace('"', '')
+            # Remove quotes (because when you copy path in Windows they are automaticly copied, that's annoing to always remove them manualy)
+            video_path = video_path.replace('"', '')
 
-        video_text = input(str("Specify video text:"))
+            video_text = input(str("Specify video text:"))
 
-        manual_mode(video_path, video_text, args.s)
+            items.append({'path' : video_path.strip(), 'text' : video_text.strip()})
+
+        if len(items) == 0:
+            print('Please, provide at least 1 video!')
+            return    
+
+        create_video(items, args.s, args.skip)
 
     elif args.mode == 'a':
         pass
@@ -28,24 +41,43 @@ def choose_mode(args):
     else:
         print("You provided invalid mode. Please choose valid mode")
 
-def manual_mode(video_path : str, video_text : str, song : str):
+def combine_videos(videos):
+
+    if len(videos) == 1:
+        return videos[0]
     
-    # Create video class
-    video = Video(video_path)
+    return Video.combine_videos(videos, os.path.join(output_path, 'temp.mp4'))
 
-    # Create subtitles track
-    voice_path = audio.tts(session_id, "en_au_002", video_text, output_path)
-    video.add_audio(voice_path)
+def create_video(items, song : str, skip):
+    
+    videos = []
 
-    # Create song track (if needed)
+    for i, item in enumerate(items):
+        # Create video class
+        video = Video(item['path'])
+
+        # Create subtitles track
+        voice_path = audio.tts(session_id, "en_au_002", item['text'], os.path.join(output_path, 'output' + str(i) + '.mp3'))
+        video.add_audio(voice_path)
+
+        # Create subtitles
+        subtitles = audio.generate_subtitles(voice_path, output_path, skip)
+        video.add_subtitles(subtitles)
+
+        video_path = video.save(os.path.join(output_path, "output" + str(i) + ".mp4"))
+
+        videos.append(Video(video_path))
+    
+    combined_video = combine_videos(videos)
+
+     # Create song track (if needed)
     if song != '':
-        video.add_audio(song, 0.15)
+       combined_video.add_audio(song, 0.15)
 
-    # Create subtitles
-    subtitles = audio.generate_subtitles(voice_path, output_path)
-    video.add_subtitles(subtitles)
-
-    video.save(os.path.join(output_path, "output.mp4"))
+    combined_video.save(os.path.join(output_path, "output.mp4"), True)
+    
+    # Remove temp video
+    os.remove(combined_video.video_clip.filename)
 
 
 def main():
@@ -56,8 +88,10 @@ def main():
     parser.add_argument('mode', default='m', choices=['m', 'a'], help='Parser mode')
     # Song is an optional argument, it is either pat to file or to folder
     parser.add_argument('--s', '--path', required=False, default='')
+    # Argument for automatic skip of requesting user to press any key 
+    parser.add_argument('-a', '--skip', action='store_true', help='Automatic skip flag')
     args = parser.parse_args()
-    
+
     # Check if our folder for output exists, if not - create
 
     if not os.path.exists(output_path):
