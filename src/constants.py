@@ -1,5 +1,8 @@
 tts_max_characters = 300
-aspect_ratio = 9/16
+video_width = 1080
+video_height = 1920
+subtitles_size = video_width / 16
+transparent_image = 'assets/transparent.png'
 
 voices = [
     # DISNEY VOICES

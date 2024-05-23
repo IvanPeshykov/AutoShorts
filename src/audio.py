@@ -46,8 +46,8 @@ def split_text(text):
     return parts
 
 
-def tts(session_id : str, text_speaker: str = "en_us_002", req_text: str = "TikTok Text To Speech",
-        output_path: str = 'output'):
+def tts(session_id : str, index,  text_speaker: str = "en_us_002", req_text: str = "TikTok Text To Speech",
+        output_path: str = 'output.mp3'):
     req_text = req_text.replace("+", "plus")
     req_text = req_text.replace(" ", "+")
     req_text = req_text.replace("&", "and")
@@ -89,7 +89,7 @@ def tts(session_id : str, text_speaker: str = "en_us_002", req_text: str = "TikT
 
         b64d = base64.b64decode(vstr)
 
-        path = "temp" + str(i) + ".mp3"
+        path = "temp" + str(index) + str(i) + ".mp3"
 
         with open(path, "wb") as out:
             out.write(b64d)
@@ -132,9 +132,5 @@ def generate_subtitles(audio_path : str, output_folder = 'output', skip = False)
     vtt_writer(result, audio_path, word_options)
 
     format_srt(output_path)
-
-    # Ask user to mannualy continue, because he might want to edit srt file
-    if not skip:
-        input('Press any key to continue')
 
     return output_path

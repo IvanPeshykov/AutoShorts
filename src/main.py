@@ -1,4 +1,4 @@
-import audio, os, argparse
+import audio, os, argparse, multiprocessing
 from video import Video
 from dotenv import load_dotenv
 from helpers import format_song
@@ -33,7 +33,7 @@ def choose_mode(args):
             print('Please, provide at least 1 video!')
             return    
 
-        create_video(items, args.s, args.skip)
+        create_videos(items, args.s, args.skip)
 
     elif args.mode == 'a':
         pass
@@ -46,39 +46,64 @@ def combine_videos(videos):
     if len(videos) == 1:
         return videos[0]
     
-    return Video.combine_videos(videos, os.path.join(output_path, 'temp.mp4'))
+    return Video.combine_videos(videos)
 
-def create_video(items, song : str, skip):
+def create_video(item, voice_path, subtitles, index):
+
+    # Create video class
+    video = Video(item['path'])
+
+    # Crop video and add transparent images
+    video.video_clip = video.crop_video(video.video_clip, 40)
+    video = video.add_images(video.video_clip, 30)
+
+    # Add subtitles track
+    video.add_audio(voice_path)
+
+    # Add subtitles
+    video.add_subtitles(subtitles)
+
+    video_path = video.save(os.path.join(output_path, "output" + str(index) + ".mp4"))
+
+    return video_path
     
-    videos = []
 
-    for i, item in enumerate(items):
-        # Create video class
-        video = Video(item['path'])
+def create_videos(videos, song : str, skip):
 
+    subtitles_audio = []
+    subtitles = []
+
+    for i, item in enumerate(videos):
         # Create subtitles track
-        voice_path = audio.tts(session_id, "en_au_002", item['text'], os.path.join(output_path, 'output' + str(i) + '.mp3'))
-        video.add_audio(voice_path)
+        voice_path = audio.tts(session_id, i, "en_au_002", item['text'], os.path.join(output_path, 'output' + str(i) + '.mp3'))
+
+        subtitles_audio.append(voice_path)
 
         # Create subtitles
-        subtitles = audio.generate_subtitles(voice_path, output_path, skip)
-        video.add_subtitles(subtitles)
-
-        video_path = video.save(os.path.join(output_path, "output" + str(i) + ".mp4"))
-
-        videos.append(Video(video_path))
+        subtitles.append(audio.generate_subtitles(voice_path, output_path, skip))
     
-    combined_video = combine_videos(videos)
+    # Ask user to mannualy continue, because he might want to edit srt file
+    if not skip:
+        input('Press any key to continue')
+
+    args = [(video, subtitles_audio[index], subtitles[index], index) for  index, video in enumerate(videos)]
+
+    
+    # Determine the number of worker processes to use
+    num_workers = min(len(videos), multiprocessing.cpu_count())
+    
+    # Create a pool of worker processes
+    with multiprocessing.Pool(processes=num_workers) as pool:
+        # Use starmap to pass multiple arguments to the worker function
+        results = pool.starmap(create_video, args)
+
+    combined_video = combine_videos([Video(result) for  result in results])
 
      # Create song track (if needed)
     if song != '':
-       combined_video.add_audio(song, 0.15)
+       combined_video.add_audio(song, 0.1)
 
     combined_video.save(os.path.join(output_path, "output.mp4"), True)
-    
-    # Remove temp video
-    os.remove(combined_video.video_clip.filename)
-
 
 def main():
 
