@@ -1,4 +1,4 @@
-import srt, random, os
+import srt, random, os, mimetypes, math
 
 def format_srt(file_path):
     # Read in the file
@@ -27,3 +27,15 @@ def format_song(song_path : str):
 
 def get_random_item(items):
     return items[random.randint(0, len(items) - 1)]
+
+def get_mime_type(file_path):
+    mime_type, _ = mimetypes.guess_type(file_path)
+    return mime_type
+
+def is_image(file_path):
+    mime_type = get_mime_type(file_path)
+    return mime_type and mime_type.startswith('image')
+
+def is_video(file_path):
+    mime_type = get_mime_type(file_path)
+    return mime_type and mime_type.startswith('video')

@@ -108,7 +108,6 @@ def tts(session_id : str, index,  text_speaker: str = "en_us_002", req_text: str
     return combined_path
 
 
-
 def randomvoice():
     count = random.randint(0, len(voices))
     text_speaker = voices[count]

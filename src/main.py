@@ -75,7 +75,7 @@ def create_videos(videos, song : str, skip):
 
     for i, item in enumerate(videos):
         # Create subtitles track
-        voice_path = audio.tts(session_id, i, "en_au_002", item['text'], os.path.join(output_path, 'output' + str(i) + '.mp3'))
+        voice_path = audio.tts(session_id, i, "en_us_010", item['text'], os.path.join(output_path, 'output' + str(i) + '.mp3'))
 
         subtitles_audio.append(voice_path)
 

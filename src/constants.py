@@ -2,6 +2,7 @@ tts_max_characters = 300
 video_width = 1080
 video_height = 1920
 subtitles_size = video_width / 16
+max_video_length = 60
 transparent_image = 'assets/transparent.png'
 
 voices = [
