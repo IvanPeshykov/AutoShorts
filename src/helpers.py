@@ -1,4 +1,5 @@
-import srt, random, os, mimetypes, math
+import srt, random, os, mimetypes
+from PIL import Image
 
 def format_srt(file_path):
     # Read in the file
@@ -39,3 +40,10 @@ def is_image(file_path):
 def is_video(file_path):
     mime_type = get_mime_type(file_path)
     return mime_type and mime_type.startswith('video')
+
+def grayscale_to_rgba(file_name):
+    formatter = {"PNG": "RGBA", "JPEG": "RGB"}
+    img = Image.open(file_name)
+    rgbimg = Image.new(formatter.get(img.format, 'RGB'), img.size)
+    rgbimg.paste(img)
+    rgbimg.save(file_name, format=img.format)
