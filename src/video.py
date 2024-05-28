@@ -2,8 +2,8 @@ import numpy, cv2
 from moviepy.editor import *
 from moviepy.video.fx.all import crop
 from moviepy.video.tools.subtitles import SubtitlesClip
-from helpers import get_random_item, is_image, is_video, grayscale_to_rgba
-from constants import transparent_image, video_height, video_width,  fonts, subtitles_size, max_video_length
+from src.helpers import get_random_item, is_image, is_video, grayscale_to_rgba
+from src.constants import transparent_image, video_height, video_width,  fonts, subtitles_size, max_video_length
 from moviepy.audio.fx.volumex import volumex
 
 class Video:

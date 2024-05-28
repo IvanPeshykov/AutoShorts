@@ -1,8 +1,8 @@
 import requests, base64, random, os, whisper, math
-from constants import voices, tts_max_characters
+from src.constants import voices, tts_max_characters
 from pydub import AudioSegment
 from whisper.utils import get_writer
-from helpers import format_srt
+from src.helpers import format_srt
 
 
 

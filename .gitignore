@@ -157,6 +157,4 @@ cython_debug/
 #Output files
 output/
 
-#Assets: music, videos, etc..
-assets/
 

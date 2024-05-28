@@ -1,7 +1,8 @@
-import audio, os, argparse, multiprocessing
-from video import Video
+import os, argparse, multiprocessing
+from src import audio
+from src.video import Video
 from dotenv import load_dotenv
-from helpers import format_song
+from src.helpers import format_song
 load_dotenv()
 
 session_id = os.getenv("session_id")
