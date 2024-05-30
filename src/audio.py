@@ -6,8 +6,7 @@ from src.helpers import format_srt
 
 
 
-API_BASE_URL = f"https://api16-normal-v6.tiktokv.com/media/api/text/speech/invoke/"
-USER_AGENT = f"com.zhiliaoapp.musically/2022600030 (Linux; U; Android 7.1.2; es_ES; SM-G988N; Build/NRD90M;tt-ok/3.12.13.1)"
+elevenlabs_apikey = os.environ.get("elevenlabs_apikey")
 session_id = os.environ.get("session_id")
 
 def combine_audios(output_path: str, audios: list[str]):
@@ -45,9 +44,55 @@ def split_text(text):
     
     return parts
 
+def elevenlabs_tts(text : str = 'Elvenlabs text to speech', voice_id = '', output_path = 'output.mp3'):
 
-def tts(session_id : str, index,  text_speaker: str = "en_us_002", req_text: str = "TikTok Text To Speech",
+    chunck_size = 1024  # Size of chunks to read/write at a time
+
+    # Construct the URL for the Text-to-Speech API request
+    tts_url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}/stream"
+    
+    # Set up headers for the API request, including the API key for authentication
+    headers = {
+    "Accept": "application/json",
+    "xi-api-key": elevenlabs_apikey
+    }
+    
+    # Set up the data payload for the API request, including the text and voice settings
+    data = {
+    "text": text,
+    "model_id": "eleven_multilingual_v2",
+    "voice_settings": {
+        "stability": 0.5,
+        "similarity_boost": 0.8,
+        "style": 0.0,
+        "use_speaker_boost": True
+        }
+    }
+    
+    # Make the POST request to the TTS API with headers and data, enabling streaming response
+    response = requests.post(tts_url, headers=headers, json=data, stream=True)
+    
+    # Check if the request was successful
+    if response.ok:
+        # Open the output file in write-binary mode
+        with open(output_path, "wb") as f:
+            # Read the response in chunks and write to the file
+            for chunk in response.iter_content(chunk_size=chunck_size):
+                f.write(chunk)
+
+        return output_path
+    
+    else:
+        # Raise the error message if the request was not successful
+         raise ValueError(response.text)
+
+
+def tiktok_tts(session_id : str, index,  text_speaker: str = "en_us_002", req_text: str = "TikTok Text To Speech",
         output_path: str = 'output.mp3'):
+
+    API_BASE_URL = f"https://api16-normal-v6.tiktokv.com/media/api/text/speech/invoke/"
+    USER_AGENT = f"com.zhiliaoapp.musically/2022600030 (Linux; U; Android 7.1.2; es_ES; SM-G988N; Build/NRD90M;tt-ok/3.12.13.1)"
+
     req_text = req_text.replace("+", "plus")
     req_text = req_text.replace(" ", "+")
     req_text = req_text.replace("&", "and")

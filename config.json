@@ -1,8 +1,15 @@
 {
     "mode" : "manual",
-    "song" : "D:/Shorts/assets/music/marches/slovyanka.mp3",
+    "tts" : "elevenlabs",
+    "elevenlabs": {
+        "voice_id" : "gUABw7pXQjhjt0kNFBTF"
+    },
+
+    "tiktok": {
+        "voice_name" : "en_us_010"
+    },
+    "song" : "",
     "skip" : true,
     "items" : [
-        {"path" : "C:/Users/Ivan/Videos/Battlefield 4/Battlefield 4 2024.05.19 - 15.01.11.11.DVR.mp4", "text" : "Hello wolrd"}
     ]
 }

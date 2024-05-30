@@ -57,9 +57,18 @@ def create_videos(data):
     subtitles = []
 
     for i, item in enumerate(data['items']):
-        # Create subtitles track
-        voice_path = audio.tts(session_id, i, "en_us_010", item['text'], os.path.join(output_path, 'output' + str(i) + '.mp3'))
 
+        voice_output_path = os.path.join(output_path, 'output' + str(i) + '.mp3')
+        voice_path = ''
+
+        # Create subtitles track
+        
+        if data['tts'] == 'elevenlabs':
+            voice_path = audio.elevenlabs_tts(item['text'], data['elevenlabs']['voice_id'], voice_output_path)
+
+        else:
+            voice_path = audio.tiktok_tts(session_id, i, data['tiktok']['voice_name'], item['text'], voice_output_path)
+            
         subtitles_audio.append(voice_path)
 
         # Create subtitles
