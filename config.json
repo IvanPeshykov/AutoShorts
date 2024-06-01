@@ -2,7 +2,7 @@
     "mode" : "manual",
     "tts" : "elevenlabs",
     "elevenlabs": {
-        "voice_id" : "gUABw7pXQjhjt0kNFBTF"
+        "voice_id" : "j9jfwdrw7BRfcR43Qohk"
     },
 
     "tiktok": {
@@ -11,5 +11,6 @@
     "song" : "",
     "skip" : true,
     "items" : [
+       {"path" : "path", "text" : "text", "keep_audio" : false}
     ]
 }

@@ -41,12 +41,14 @@ def create_video(item, voice_path, subtitles, index):
     video = video.add_images(video.video_clip, 30)
 
     # Add subtitles track
-    video.add_audio(voice_path)
+    if voice_path != "":
+        video.add_audio(voice_path)
 
     # Add subtitles
-    video.add_subtitles(subtitles)
+    if subtitles != "":
+        video.add_subtitles(subtitles)
 
-    video_path = video.save(os.path.join(output_path, "output" + str(index) + ".mp4"))
+    video_path = video.save(os.path.join(output_path, "output" + str(index) + ".mp4"), item['keep_audio'])
 
     return video_path
     
@@ -61,18 +63,24 @@ def create_videos(data):
         voice_output_path = os.path.join(output_path, 'output' + str(i) + '.mp3')
         voice_path = ''
 
-        # Create subtitles track
-        
-        if data['tts'] == 'elevenlabs':
-            voice_path = audio.elevenlabs_tts(item['text'], data['elevenlabs']['voice_id'], voice_output_path)
+        if item['text'] != '':
+
+            # Create subtitles track
+            if data['tts'] == 'elevenlabs':
+                voice_path = audio.elevenlabs_tts(item['text'], data['elevenlabs']['voice_id'], voice_output_path)
+
+            else:
+                voice_path = audio.tiktok_tts(session_id, i, data['tiktok']['voice_name'], item['text'], voice_output_path)
+
+            subtitles_audio.append(voice_path)
+
+            # Create subtitles
+            subtitles.append(audio.generate_subtitles(voice_path, output_path, data['skip']))
 
         else:
-            voice_path = audio.tiktok_tts(session_id, i, data['tiktok']['voice_name'], item['text'], voice_output_path)
-            
-        subtitles_audio.append(voice_path)
+            subtitles_audio.append("")
+            subtitles.append("")
 
-        # Create subtitles
-        subtitles.append(audio.generate_subtitles(voice_path, output_path, data['skip']))
     
     # Ask user to mannualy continue, because he might want to edit srt file
     if not data['skip']:
