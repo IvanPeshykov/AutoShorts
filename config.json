@@ -2,15 +2,14 @@
     "mode" : "manual",
     "tts" : "elevenlabs",
     "elevenlabs": {
-        "voice_id" : "j9jfwdrw7BRfcR43Qohk"
+        "voice_id" : "EiNlNiXeDU1pqqOPrYMO"
     },
-
     "tiktok": {
         "voice_name" : "en_us_010"
     },
-    "song" : "",
+    "song" : "D:/Shorts/assets/music/epic/epic.mp3",
     "skip" : true,
     "items" : [
-       {"path" : "path", "text" : "text", "keep_audio" : false}
+       {"path" : "C:/Users/Ivan/Downloads/tiger.jpg", "text" : "Why the Tiger1 tank is undoubtedly the best tank ever created?", "keep_audio" : false}
     ]
 }
